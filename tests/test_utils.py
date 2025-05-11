@@ -1,5 +1,6 @@
 from src.utils import Category, Product
 
+
 def test_product_initialization(product):
     assert product.name == "Товар"
     assert product.description == "Описание товара"
@@ -13,15 +14,18 @@ def test_category_initialization(category):
     assert isinstance(category.products, list)
     assert len(category.products) == 0
 
+
 def test_category_counter(category):
     initial_count = Category.category_count
     Category(name="Новая категория", description="...", products=[])
     assert Category.category_count == initial_count + 1
 
+
 def test_product_counter(product):
     initial_count = Category.product_count
     Category(name="Тест", description="...", products=[product])
     assert Category.product_count == initial_count + 1
+
 
 def test_multiple_categories():
     Category.category_count = 0
