@@ -38,3 +38,31 @@ def test_multiple_categories():
 
     assert Category.category_count == 2
     assert Category.product_count == 3
+
+
+def test_product_creation():
+    p = Product("Телефон", "Смартфон", 20000, 5)
+    assert p.name == "Телефон"
+    assert p.price == 20000
+
+
+def test_price_setter_valid():
+    p = Product("Ноутбук", "Игровой", 50000, 3)
+    p.price = 60000
+    assert p.price == 60000
+
+
+def test_price_setter_invalid(capsys):
+    p = Product("Наушники", "Беспроводные", 5000, 10)
+    p.price = -100
+    captured = capsys.readouterr()
+    assert "Цена не должна быть нулевая или отрицательная" in captured.out
+    assert p.price == 5000
+
+
+def test_category_add_product():
+    p = Product("Клавиатура", "Механическая", 3000, 8)
+    category = Category("Периферия", "Устройства ввода")
+    category.add_product(p)
+    assert len(category.products) == 1
+    assert "Клавиатура, 3000 руб. Остаток: 8 шт." in category.products
