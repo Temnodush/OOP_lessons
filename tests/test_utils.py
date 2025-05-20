@@ -66,3 +66,25 @@ def test_category_add_product():
     category.add_product(p)
     assert len(category.products) == 1
     assert "Клавиатура, 3000 руб. Остаток: 8 шт." in category.products
+
+
+def test_product_str_representation(product):
+    expected_str = "Товар, 100.5 руб. Остаток: 10 шт."
+    assert str(product) == expected_str
+
+
+def test_category_str_representation():
+    p1 = Product("Товар 1", "Описание", 100, 3)
+    p2 = Product("Товар 2", "Описание", 200, 2)
+    category = Category("Категория", "Описание", [p1, p2])
+
+    assert str(category) == "Категория, количество продуктов: 5 шт."
+
+
+def test_category_products_getter_optimization():
+    p = Product("Тест", "Описание", 100, 5)
+    category = Category("Категория", "Описание", [p])
+
+    # Проверка, что используется __str__ продукта
+    assert str(p) in category.products
+    assert category.products == ["Тест, 100 руб. Остаток: 5 шт."]
