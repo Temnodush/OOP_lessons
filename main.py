@@ -1,4 +1,4 @@
-from src.utils import Product, Category
+from src.utils import Category, Product
 
 if __name__ == "__main__":
     product1 = Product(
