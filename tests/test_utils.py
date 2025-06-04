@@ -188,3 +188,28 @@ def test_base_product_is_abstract():
     """Проверка, что BaseProduct нельзя инстанцировать"""
     with pytest.raises(TypeError):
         BaseProduct("Test", "Desc", 100, 5)
+
+
+def test_category_average_price_with_products():
+    """Проверка средней цены с товарами"""
+    p1 = Product("Товар1", "Описание1", 100, 2)
+    p2 = Product("Товар2", "Описание2", 200, 3)
+    category = Category("Категория", "Описание", [p1, p2])
+    assert category.average_price() == 150
+
+def test_category_average_price_no_products():
+    """Проверка пустой категории"""
+    category = Category("Пустая", "Категория")
+    assert category.average_price() == 0
+
+def test_category_average_price_one_product():
+    """Проверка с одним товаром"""
+    p = Product("Товар", "Описание", 500, 1)
+    category = Category("Категория", "Описание", [p])
+    assert category.average_price() == 500
+
+def test_product_zero_quantity_error():
+    """Проверка создания товара с нулевым количеством"""
+    with pytest.raises(ValueError) as excinfo:
+        Product("Телефон", "Смартфон", 20000, 0)
+    assert "Товар с нулевым количеством не может быть добавлен" in str(excinfo.value)

@@ -45,10 +45,13 @@ class Product(Mixin, BaseProduct):
 
     def __init__(self, name, description, price, quantity):
         super().__init__(name, description, price, quantity)
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
+
 
     def __add__(self, other):
         if type(other) != type(self):
@@ -112,6 +115,17 @@ class Category:
     def __str__(self):
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def average_price(self):
+        try:
+            total_price = 0
+            count_products = len(self.__products)
+            for product in self.__products:
+                total_price += product.price
+            return total_price / count_products
+        except ZeroDivisionError:
+            return 0
+
 
     def add_product(self, product):
         if isinstance(product, Product):
