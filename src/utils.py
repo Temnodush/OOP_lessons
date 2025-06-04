@@ -1,10 +1,50 @@
-class Product:
+from abc import ABC, abstractmethod
+
+class BaseProduct(ABC):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
+    @abstractmethod
+    def __add__(self, other):
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @property
+    @abstractmethod
+    def price(self):
+        pass
+
+    @price.setter
+    @abstractmethod
+    def price(self, new_price):
+        pass
+
+class Mixin:
+    name: str
+    description: str
+    price: float
+    quantity: int
+    def __init__(self,  *args, **kwargs):
+        print(f"{self.__class__.__name__}: {args}, {kwargs}")
+        super().__init__(*args, **kwargs)
+
+
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}, {self.name}, {self.description}', {self.price}, {self.quantity}"
+
+
+class Product(Mixin, BaseProduct):
     name: str
     description: str
     price: float
     quantity: int
 
     def __init__(self, name, description, price, quantity):
+        super().__init__(name, description, price, quantity)
         self.name = name
         self.description = description
         self.__price = price
@@ -52,7 +92,6 @@ class LawnGrass(Product):
         self.germination_period = germination_period
         self.country = country
         self.color = color
-
 
 class Category:
     product_count: int = 0

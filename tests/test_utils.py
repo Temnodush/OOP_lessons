@@ -1,6 +1,6 @@
 import pytest
 
-from src.utils import Category, Product, Smartphone, LawnGrass
+from src.utils import Category, Product, Smartphone, LawnGrass, Mixin, BaseProduct
 
 
 def test_product_initialization(product):
@@ -132,3 +132,59 @@ def test_add_subclass_products():
     category.add_product(l)
 
     assert len(category.products) == 2
+
+def test_mixin_output_product(capsys):
+    """Проверка вывода информации при создании Product"""
+    p = Product("Телефон", "Смартфон", 20000, 5)
+    captured = capsys.readouterr()
+    assert "Product" in captured.out
+    assert "('Телефон', 'Смартфон', 20000, 5)" in captured.out
+
+def test_mixin_output_smartphone(capsys):
+    """Проверка вывода информации при создании Smartphone"""
+    s = Smartphone(2.5, "X", 128, "black",
+                   "Phone", "...", 50000, 1)
+    captured = capsys.readouterr()
+    assert "Smartphone" in captured.out
+    assert "('Phone', '...', 50000, 1)" in captured.out
+
+def test_mixin_output_lawn_grass(capsys):
+    """Проверка вывода информации при создании LawnGrass"""
+    lg = LawnGrass(7, "Russia", "green",
+                   "Трава", "Описание", 120, 25)
+    captured = capsys.readouterr()
+    assert "LawnGrass" in captured.out
+    assert "('Трава', 'Описание', 120, 25)" in captured.out
+
+
+def test_class_hierarchy():
+    """Проверка корректности иерархии наследования"""
+    assert issubclass(Product, Mixin)
+    assert issubclass(Product, BaseProduct)
+    assert issubclass(Smartphone, Product)
+    assert issubclass(LawnGrass, Product)
+
+    p = Product("Test", "Desc", 100, 5)
+    assert isinstance(p, Mixin)
+    assert isinstance(p, BaseProduct)
+
+
+def test_abstract_method_implementation():
+    p = Product("Test", "Desc", 100, 5)
+
+    # Проверка __add__
+    p2 = Product("Test2", "Desc2", 200, 3)
+    assert p + p2 == 100 * 5 + 200 * 3
+
+    # Проверка __str__
+    assert str(p) == "Test, 100 руб. Остаток: 5 шт."
+
+    # Проверка price property
+    assert p.price == 100
+    p.price = 150
+    assert p.price == 150
+
+def test_base_product_is_abstract():
+    """Проверка, что BaseProduct нельзя инстанцировать"""
+    with pytest.raises(TypeError):
+        BaseProduct("Test", "Desc", 100, 5)
