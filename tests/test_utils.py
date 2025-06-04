@@ -1,4 +1,6 @@
-from src.utils import Category, Product
+import pytest
+
+from src.utils import Category, Product, Smartphone, LawnGrass
 
 
 def test_product_initialization(product):
@@ -66,3 +68,67 @@ def test_category_add_product():
     category.add_product(p)
     assert len(category.products) == 1
     assert "Клавиатура, 3000 руб. Остаток: 8 шт." in category.products
+
+
+def test_product_str_representation(product):
+    expected_str = "Товар, 100.5 руб. Остаток: 10 шт."
+    assert str(product) == expected_str
+
+
+def test_category_str_representation():
+    p1 = Product("Товар 1", "Описание", 100, 3)
+    p2 = Product("Товар 2", "Описание", 200, 2)
+    category = Category("Категория", "Описание", [p1, p2])
+
+    assert str(category) == "Категория, количество продуктов: 5 шт."
+
+
+def test_category_products_getter_optimization():
+    p = Product("Тест", "Описание", 100, 5)
+    category = Category("Категория", "Описание", [p])
+
+    # Проверка, что используется __str__ продукта
+    assert str(p) in category.products
+    assert category.products == ["Тест, 100 руб. Остаток: 5 шт."]
+
+def test_add_smartphones():
+    """ Проверка сложения продукта Smartphone"""
+    s1 = Smartphone(2.5, "X", 128, "black",
+                    "Phone", "...", 50000, 1)
+    s2 = Smartphone(3.0, "Y", 256, "white",
+                    "Phone", "...", 60000, 2)
+    assert s1 + s2 == 50000*1 + 60000*2
+
+def test_add_grasses():
+    """ Проверка сложения продукта LawnGrass"""
+    lg1 = LawnGrass(7, "Russia", "green",
+                    "Мятлик луговой", "Описание1", 120, 25)
+    lg2 = LawnGrass(14, "Russia", "green",
+                    "Полевица", "Описание2", 100, 15)
+    assert lg1 + lg2 == 25*120 + 15*100
+
+
+def test_add_different_classes_error():
+    """ Проверка на сложение разных классов."""
+    l = LawnGrass(14, "Russia", "green",
+                  "Grass", "...", 1000, 5)
+    s = Smartphone(2.5, "X", 128, "black",
+                   "Phone", "...", 50000, 1)
+
+    with pytest.raises(TypeError) as exc_info:
+        l + s
+
+    assert "Нельзя складывать продукты разных классов" in str(exc_info.value)
+
+
+def test_add_subclass_products():
+    category = Category("Тест", "...")
+    s = Smartphone(2.5, "X", 128, "black",
+                   "Phone", "...", 50000, 1)
+    l = LawnGrass(14, "Russia", "green",
+                  "Grass", "...", 1000, 5)
+
+    category.add_product(s)
+    category.add_product(l)
+
+    assert len(category.products) == 2
